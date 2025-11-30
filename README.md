@@ -15,6 +15,7 @@ Blind XSS is a type of Cross-Site Scripting attack where the malicious payload i
 - **Vulnerable endpoints**: Multiple input points where XSS payloads can be injected
 - **Admin bot simulation**: A background process that "reads" stored reports, executing any XSS payloads
 - **Real-time feedback**: Immediate visibility of XSS payload execution
+- **Admin dashboard**: Review flagged payloads, severities, and detection reasons in a simple UI
 - **Educational focus**: Clear warnings and explanations about security risks
 
 ## 🛠️ Technologies Used
@@ -82,12 +83,13 @@ curl -X POST http://localhost:3000/api/reports \
 ### API Endpoints
 - `GET /api/reports` - List all stored reports
 - `POST /api/reports` - Submit a new report with a User-Agent payload
-- `GET /api/comments` - List all comments  
+- `GET /api/comments` - List all comments
 - `POST /api/comments` - Submit a new comment (potential XSS vector)
 - `POST /api/contact` - Submit a contact form (captures User-Agent)
 - `GET /api/xss-payloads` - List collected XSS payloads
 - `GET /api/bot` - Manually trigger the bot to scan for XSS payloads
 - `GET|POST /api/collect-xss` - Endpoint for collecting payload data (returns 1x1 GIF)
+- `GET /admin` - Minimal dashboard that surfaces flagged reports and detection reasons
 
 ## 🤖 Bot Behavior
 
@@ -95,8 +97,10 @@ The application includes a "bot" that simulates an admin user reviewing reports.
 
 1. Checks `/api/bot` endpoint for new reports
 2. Scans recent reports (past 5 minutes) for potential XSS payloads
-3. If XSS-like patterns are detected, they are flagged
+3. If XSS-like patterns are detected, they are flagged with a severity and detection rule
 4. In a real scenario, the bot would execute the JavaScript code in a browser context
+
+You can also visit `/admin` to see the flagged reports, their severities (low/medium/high), and the rules that triggered them. The page auto-refreshes every few seconds to mirror the polling bot.
 
 ## 🧪 Common XSS Payloads to Test
 
