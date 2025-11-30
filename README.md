@@ -18,14 +18,20 @@ This repo is tuned for Vercel’s serverless platform (no local file writes; eph
 - npm 9+ or pnpm/yarn equivalent
 
 ## Quick Start (Local)
-1) Install:
+1) Clone and install:
+   - `git clone https://github.com/3xecutablefile/BlindXSS-Lab.git`
+   - `cd BlindXSS-Lab`
    - `npm install`
 
 2) Run dev server:
    - `npm run dev`
    - App runs at `http://localhost:3000`
 
-3) Try it:
+3) Optional production build locally:
+   - `npm run build && npm start`
+   - Starts a production server on port 3000
+
+4) Try it:
    - Open the homepage and submit an XSS payload (e.g. `<script>alert('XSS')</script>`)
    - Submit a contact message to see your UA captured
    - Trigger the bot manually: `curl http://localhost:3000/api/bot`
