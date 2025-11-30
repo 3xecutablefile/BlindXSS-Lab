@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Blind XSS Practice</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d9534f; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #337ab7; }
+        nav a:hover { text-decoration: underline; }
+        .vulnerable-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .warning { background-color: #f9f2f4; color: #a94442; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>XSS Practice Home</h1>
+        
+        <nav>
+            <a href="/">Home</a>
+            <a href="/comments">Comments</a>
+            <a href="/contact">Contact</a>
+            <a href="/search?q=test">Search</a>
+            <a href="/profile/test">Profile</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+        
+        <div class="warning">
+            <strong>WARNING:</strong> This site contains intentional vulnerabilities for educational purposes.
+        </div>
+        
+        <div class="vulnerable-section">
+            <h3>About this Practice Site</h3>
+            <p>This site has been designed with multiple Blind XSS vulnerabilities for educational purposes:</p>
+            <ul>
+                <li>Stored XSS in comments</li>
+                <li>Blind XSS in User-Agent header</li>
+                <li>Reflected XSS in search and other parameters</li>
+                <li>XSS in admin panel</li>
+            </ul>
+        </div>
+        
+        <div class="vulnerable-section">
+            <h3>How to Practice</h3>
+            <ol>
+                <li>Try injecting basic XSS payloads in various input fields</li>
+                <li>Test User-Agent header injection by changing your browser's user agent</li>
+                <li>Try blind XSS payloads that send data to external sources</li>
+                <li>Check the admin panel to see if your payloads executed</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

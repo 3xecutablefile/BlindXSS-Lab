@@ -1,0 +1,22 @@
+.vercel
+.env*.local
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local data
+*.db

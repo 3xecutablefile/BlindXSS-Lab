@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Blind XSS Practice</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #d9534f; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 15px; text-decoration: none; color: #337ab7; }
+        nav a:hover { text-decoration: underline; }
+        .warning { background-color: #f9f2f4; color: #a94442; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        form { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #5cb85c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        .user-agent-display { margin: 15px 0; padding: 10px; background-color: #f9f9f9; border-left: 3px solid #007cba; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+        
+        <nav>
+            <a href="/">Home</a>
+            <a href="/comments">Comments</a>
+            <a href="/contact">Contact</a>
+            <a href="/search?q=test">Search</a>
+            <a href="/profile/test">Profile</a>
+            <a href="/admin">Admin Panel</a>
+        </nav>
+        
+        <div class="warning">
+            <strong>WARNING:</strong> This form is vulnerable to Blind XSS through the User-Agent header. Your User-Agent will be stored and potentially viewed by administrators.
+        </div>
+        
+        <form action="/contact" method="POST">
+            <h3>Send us a message</h3>
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+        
+        <div class="user-agent-display">
+            <strong>Your User-Agent:</strong> <%= req.get('User-Agent') || 'Unknown' %>
+            <p>This will be stored in our logs when you submit the form!</p>
+        </div>
+    </div>
+</body>
+</html>
