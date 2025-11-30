@@ -2,16 +2,18 @@
   "name": "blind-xss-practice-vercel",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently -k -n web,bot -c auto \"next dev\" \"node scripts/bot.js\"",
     "build": "next build",
-    "start": "next start",
-    "bot": "node bot.js"
+    "start": "concurrently -k -n web,bot -c auto \"next start\" \"node scripts/bot.js\"",
+    "bot": "node scripts/bot.js"
   },
   "dependencies": {
+    "concurrently": "^8.2.2",
     "next": "^14.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
+  "devDependencies": {},
   "engines": {
     "node": ">=18"
   }

